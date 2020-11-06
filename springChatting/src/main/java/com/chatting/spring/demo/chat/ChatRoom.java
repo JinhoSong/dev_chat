@@ -1,6 +1,5 @@
 package com.chatting.spring.demo.chat;
 
-import com.chatting.spring.demo.service.ChatService;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
