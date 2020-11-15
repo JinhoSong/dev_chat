@@ -61,29 +61,50 @@
             this.findRoom();
         },
         methods: {
-            findRoom: function() {
-                axios.get('/chat/room/'+this.roomId).then(response => { this.room = response.data; });
+            findRoom: function () {
+                axios.get('/chat/room/' + this.roomId).then(response => {
+                    this.room = response.data;
+                });
             },
-            sendMessage: function() {
-                ws.send("/pub/chat/message", {}, JSON.stringify({messageType:'TALK', roomId:this.roomId, sender:this.sender, message:this.message}));
-                this.message = '';
+            sendMessage: function () {
+                if (this.message === '') {
+                    alert("메시지를 입력하세요")
+                } else {
+                    ws.send("/pub/chat/message", {}, JSON.stringify({
+                        messageType: 'TALK',
+                        roomId: this.roomId,
+                        sender: this.sender,
+                        message: this.message
+                    }));
+                    this.message = '';
+                }
             },
-            recvMessage: function(recv) {
-                this.messages.unshift({"messageType":recv.messageType,"sender":recv.messageType=='ENTER'?'[알림]':recv.sender,"message":recv.message})
+            recvMessage: function (recv) {
+                this.messages.unshift({
+                    "messageType": recv.messageType,
+                    "sender": recv.messageType == 'ENTER' ? '[알림]' : recv.sender,
+                    "message": recv.message
+                })
 
             }
         }
     });
     // pub/sub event
-    ws.connect({}, function(frame) {
-        ws.subscribe("/sub/chat/room/"+vm.$data.roomId, function(message) {
-            var recv = JSON.parse(message.body);
-            vm.recvMessage(recv);
+    ws.connect({},
+        function (frame) {
+            ws.subscribe("/sub/chat/room/" + vm.$data.roomId, function (message) {
+                var recv = JSON.parse(message.body);
+                vm.recvMessage(recv);
+            });
+            ws.send("/pub/chat/message", {}, JSON.stringify({
+                messageType: 'ENTER',
+                roomId: vm.$data.roomId,
+                sender: vm.$data.sender
+            }));
+        },
+        function (error) {
+            alert("error " + error);
         });
-        ws.send("/pub/chat/message", {}, JSON.stringify({messageType:'ENTER', roomId:vm.$data.roomId, sender:vm.$data.sender}));
-    }, function(error) {
-        alert("error "+error);
-    });
 </script>
 </body>
 </html>
