@@ -1,5 +1,5 @@
 package com.chatting.spring.demo.chat;
 
 public enum MessageType {
-    ENTER, TALK
+    ENTER, TALK, ATTEND, ANSWER
 }

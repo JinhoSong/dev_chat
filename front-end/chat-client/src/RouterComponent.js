@@ -1,18 +1,33 @@
-import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import React,{useState} from "react";
+import { BrowserRouter , Route, Switch,Link } from "react-router-dom";
 import ChatRoomDetail from "./components/chatRoom/ChatRoomDetail";
-import ChatRooms from "./components/chatRoom/ChatRooms";
 import ChatRoomContainer from './containers/ChatRoomContainer';
+import AuthRoute from "./components/login/AuthRoute";
+import LoginContainer from "./containers/LoginContainer";
+import { signIn } from './components/login/Auth';
+
 const AppRouter = () => {
+    const [user, setUser] = useState(null);
+    const [location, setLocation] = useState(null);
+    const authenticated = user != null;
+    // 무한으로 redirect 되는걸 막기 위해 가장 최상단에 /login을 배치한다.
     return (
         <div>
             <BrowserRouter>
                 <div style={style}>
                     <Switch>
-                        <Route exact path="/" component={ChatRoomContainer} />
+                        <Route
+                            path="/login"
+                            render={props => (
+                                <LoginContainer />
+                                )}
+                        />
                         <Route path="/chat/room/enter/" component={ChatRoomDetail}/>
-                        <Route path="/chat/room/enter/:roomId"  component={ChatRoomDetail}/>
-
+                        <AuthRoute
+                            //authenticated={authenticated}
+                            path="/"
+                            render={props => <ChatRoomContainer user={user} {...props} />}
+                        />
                     </Switch>
                 </div>
             </BrowserRouter>
@@ -21,7 +36,6 @@ const AppRouter = () => {
 };
 
 const style = {
-
     margin: "10px",
 };
 

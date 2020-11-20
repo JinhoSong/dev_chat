@@ -13,12 +13,12 @@ import java.util.Set;
 @Slf4j
 public class ChatRoom {
     private String roomId;
-    private String name;
+    private String roomName;
     private Set<WebSocketSession> sessions = new HashSet<>();
 
     @Builder
-    public ChatRoom(String roomId, String name) {
+    public ChatRoom(String roomId, String roomName) {
         this.roomId = roomId;
-        this.name = name;
+        this.roomName = roomName;
     }
 }

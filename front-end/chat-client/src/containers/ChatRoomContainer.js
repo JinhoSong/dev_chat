@@ -1,12 +1,13 @@
 import React from 'react';
 import ChatRooms from "../components/chatRoom/ChatRooms";
 import {connect} from 'react-redux';
-import {setRoomId, setUsername} from '../modules/chatRooms';
+import chatRooms, {setRoomId,setRoomName} from '../modules/chatRooms';
 
-const ChatRoomContainer = ({setRoomId,setUsername}) => {
+const ChatRoomContainer = ({setRoomId,setRoomName}) => {
+
     return (
         <div>
-            <ChatRooms setRoomId={setRoomId} setUsername={setUsername}/>
+            <ChatRooms setRoomId={setRoomId}  setRoomName={setRoomName}/>
         </div>
     );
 };
@@ -14,9 +15,10 @@ const ChatRoomContainer = ({setRoomId,setUsername}) => {
 export default connect(
     state => ({
         roomId: state.chatRooms.roomId,
+        roomName: state.chatRooms.roomName,
     }),
     {
         setRoomId,
-        setUsername
+        setRoomName
     },
 )(ChatRoomContainer);

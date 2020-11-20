@@ -21,17 +21,22 @@ public class ChatRoomApiController {
     public List<ChatRoom> room() {
         return chatRoomRepository.findAllRoom();
     }
+
     // 채팅방 생성
     @PostMapping("/room")
-    public ChatRoom createRoom(@RequestParam String name) {
-        return chatRoomRepository.createRoom(name);
+    public List<ChatRoom> createRoom(@RequestParam String roomName) {
+
+        chatRoomRepository.createRoom(roomName);
+        return chatRoomRepository.findAllRoom();
     }
+
     // 채팅방 입장 화면
     @GetMapping("/room/enter/{roomId}")
     public String roomDetail(Model model, @PathVariable String roomId) {
         model.addAttribute("roomId", roomId);
         return "/chat/roomdetail";
     }
+
     // 특정 채팅방 조회
     @GetMapping("/room/{roomId}")
     @ResponseBody

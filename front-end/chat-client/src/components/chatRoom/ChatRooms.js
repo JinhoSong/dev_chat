@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from "react";
 import ApiService from "../../ApiService";
-import {Link,Route} from "react-router-dom";
-import ChatRoomDetail from "./ChatRoomDetail";
+import {Link, Route} from "react-router-dom";
 
-const ChatRooms = ({setRoomId, setUsername}) => {
+const ChatRooms = ({setRoomId, setRoomName}) => {
     const [chatRooms, setChatRooms] = useState([]);
     useEffect(
         () => {
@@ -11,19 +10,31 @@ const ChatRooms = ({setRoomId, setUsername}) => {
                 setChatRooms(response.data);
             });
         }, []);
-    function roomList(info){
-        return (
 
+    function createRoom () {
+        ApiService.createChatRooms("123").then(response => {
+            setChatRooms(response.data);
+        });
+    }
+
+
+    function roomList(roomName) {
+        return (
             <div>
-                <Link to={`/chat/room/enter/${info}`}>{info}</Link>
+                <Link to={`/chat/room/enter/${roomName}`}>{roomName}</Link>
                 <br/>
             </div>
-
         )
     }
+
     return (
         <div>
-            <div>{chatRooms.map((roomInfo) => <p onClick={() => setRoomId(roomInfo.roomId)}>{roomList(roomInfo.roomId)}</p>)}</div>
+            <button onClick={() => createRoom()}>방 생성 버튼 </button>
+
+            <div>{chatRooms.map((roomInfo) => <p onClick={() => {
+                setRoomId(roomInfo.roomId);
+                setRoomName(roomInfo.roomName);
+            }}>{roomList(roomInfo.roomName)}</p>)}</div>
         </div>
     )
 }

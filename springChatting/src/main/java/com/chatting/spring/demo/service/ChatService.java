@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class ChatService {
 
     private final SimpMessageSendingOperations simpMessageSendingOperations; // 앞에 Simp주의 Simple이 아니다
+    private final MemberService memberService;
 
     public void handleActions(ChatMessage chatMessage) {
 
@@ -21,9 +22,13 @@ public class ChatService {
         //System.out.println(command);
         // 수업시간에 작성했던 코드와 똑같도록 명령어 단위로 나눈다.
         if (MessageType.ENTER.equals(command)) {
+            // 입장했을때 sender를 기준으로 새로운 객체를 만들어서 저장한다?
+            memberService.settingMember(chatMessage.getSender());
             this.enterRoom(chatMessage);
         } else if(MessageType.TALK.equals(command)){
             this.SendAllClient(chatMessage);
+        } else if(MessageType.ATTEND.equals(command)){
+            // 출석을 부른다.
         }
     }
 
