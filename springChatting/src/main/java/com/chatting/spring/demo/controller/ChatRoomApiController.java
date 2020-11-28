@@ -24,9 +24,11 @@ public class ChatRoomApiController {
 
     // 채팅방 생성
     @PostMapping("/room")
-    public List<ChatRoom> createRoom(@RequestParam String roomName) {
+    public List<ChatRoom> createRoom(@RequestParam String roomName,@RequestParam String profName,@RequestParam String tag) {
+        //String profName="정인환";
+        chatRoomRepository.createRoom(roomName,profName,tag);
 
-        chatRoomRepository.createRoom(roomName);
+        // 전체를 리턴시켜준다.
         return chatRoomRepository.findAllRoom();
     }
 

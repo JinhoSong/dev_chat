@@ -1,6 +1,7 @@
 import React,{useState} from "react";
 import { BrowserRouter , Route, Switch,Link } from "react-router-dom";
 import ChatRoomDetail from "./components/chatRoom/ChatRoomDetail";
+import ChatRoomListContainer from './containers/ChatRoomListContainer';
 import ChatRoomContainer from './containers/ChatRoomContainer';
 import AuthRoute from "./components/login/AuthRoute";
 import LoginContainer from "./containers/LoginContainer";
@@ -22,11 +23,11 @@ const AppRouter = () => {
                                 <LoginContainer />
                                 )}
                         />
-                        <Route path="/chat/room/enter/" component={ChatRoomDetail}/>
+                        <Route path="/chat/room/enter/" component={ChatRoomContainer}/>
                         <AuthRoute
-                            //authenticated={authenticated}
+                            authenticated={authenticated}
                             path="/"
-                            render={props => <ChatRoomContainer user={user} {...props} />}
+                            render={props => <ChatRoomListContainer user={user} {...props} />}
                         />
                     </Switch>
                 </div>

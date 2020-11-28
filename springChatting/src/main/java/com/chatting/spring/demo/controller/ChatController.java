@@ -15,9 +15,10 @@ public class ChatController {
     @MessageMapping("/chat/message")
     public void message(ChatMessage chatMessage){
         System.out.println(chatMessage.getMessage());
-        System.out.println(chatMessage.getSender());
+        System.out.println(chatMessage.getUser().getName());
         System.out.println(chatMessage.getRoomId());
         System.out.println(chatMessage.getMessageType());
+        System.out.println(chatMessage.getTime());
         chatService.handleActions(chatMessage);
     }
 }

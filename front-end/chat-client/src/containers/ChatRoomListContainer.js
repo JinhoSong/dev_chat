@@ -6,26 +6,24 @@ import Grid from "@material-ui/core/Grid";
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Header from '../components/common/Header'
 import UserInfo from "../components/common/UserInfo";
-import ChatRoomDetail from "../components/chatRoom/ChatRoomDetail";
-
-const ChatRoomContainer = ({setRoomId, setRoomName, setRoomInfo, user}) => {
+const ChatRoomListContainer = ({setRoomId, setRoomName, setRoomInfo, user}) => {
     const classes = useStyles();
     return (
         <div>
             <div className={classes.root}>
-                <Header title={"ChatRoom"}/>
+                <Header title={"ChatRoomList"}/>
                 <main className={classes.content}>
                     <div className={classes.toolbar}/>
                     <Grid container spacing={2}>
                         <Grid container item xs={12}>
                             <Grid item xs={8}>
-                                <ChatRoomDetail/>
+                                <ChatRooms setRoomInfo={setRoomInfo} setRoomId={setRoomId} setRoomName={setRoomName}/>
                             </Grid>
                             <Grid item xs={1}>
 
                             </Grid>
                             <Grid item xs={2}>
-                                <UserInfo user={user}/>
+                               <UserInfo user={user}/>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -72,4 +70,4 @@ export default connect(
         setRoomName,
         setRoomInfo
     },
-)(ChatRoomContainer);
+)(ChatRoomListContainer);

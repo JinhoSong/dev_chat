@@ -23,11 +23,13 @@ public class ChatRoomRepository {
         return chatRooms.get(roomId);
     }
 
-    public ChatRoom createRoom(String roomName) {
+    public ChatRoom createRoom(String roomName,String profName,String tag) {
         String randomId = UUID.randomUUID().toString();
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomId(randomId)
                 .roomName(roomName)
+                .tag(tag)
+                .profName(profName)
                 .build();
         chatRooms.put(randomId, chatRoom);
         return chatRoom;

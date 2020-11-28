@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import {setRoomId, setRoomName} from "../../modules/chatRooms";
 
 function AuthRoute({ authentication, component: Component, render, ...rest }) {
-    console.log(authentication);
+    //console.log(authentication);
     return (
         <Route
             {...rest}
@@ -29,6 +29,6 @@ function AuthRoute({ authentication, component: Component, render, ...rest }) {
 
 export default connect(
     state => ({
-        authentication: state.loginModules.authentication,
+        authentication: state.loginModules.user.authentication,
     })
 )(AuthRoute);

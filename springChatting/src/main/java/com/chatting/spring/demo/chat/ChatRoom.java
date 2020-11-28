@@ -13,12 +13,17 @@ import java.util.Set;
 @Slf4j
 public class ChatRoom {
     private String roomId;
-    private String roomName;
+    private String roomName; // 과목명
+    private String tag;
+    private String profName;
+    //private ArrayList<Member> members;
     private Set<WebSocketSession> sessions = new HashSet<>();
 
     @Builder
-    public ChatRoom(String roomId, String roomName) {
+    public ChatRoom(String roomId, String roomName,String tag,String profName) {
         this.roomId = roomId;
         this.roomName = roomName;
+        this.tag = tag;
+        this.profName = profName;
     }
 }

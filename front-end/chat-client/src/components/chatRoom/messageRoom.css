@@ -1,0 +1,14 @@
+.room {
+    background-color: skyblue;
+    color: blue;
+    height: 600px;
+    margin: 10px;
+    text-align: center;
+    overflow: scroll;
+}
+
+.textInput{
+    width: 85%;
+    height: 80%;
+
+}
