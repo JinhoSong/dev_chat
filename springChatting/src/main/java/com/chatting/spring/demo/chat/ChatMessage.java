@@ -8,10 +8,12 @@ import lombok.Setter;
 @Setter
 public class ChatMessage {
 
+    private Long id; // 채팅의 고유 Id
     private MessageType messageType;
     private String roomId;
     private User user;
     //private String sender;
     private String message;
     private String time;
+    private String sessionId;
 }

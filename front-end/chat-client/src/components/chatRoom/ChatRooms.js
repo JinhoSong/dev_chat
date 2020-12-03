@@ -23,11 +23,6 @@ function createData(name, code, population, size) {
     return {name, code, population, size, density};
 }
 
-const rows = [
-    createData('India', 'IN', 1324171354, 3287263),
-    createData('China', 'CN', 1403500365, 9596961),
-];
-
 const useStyles = makeStyles({
     root: {
         width: '100%',
@@ -38,7 +33,7 @@ const useStyles = makeStyles({
 });
 
 
-const ChatRooms = ({setRoomId, setRoomName, setRoomInfo}) => {
+const ChatRooms = ({setRoomInfo}) => {
     const [chatRooms, setChatRooms] = useState([]);
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
@@ -59,7 +54,7 @@ const ChatRooms = ({setRoomId, setRoomName, setRoomInfo}) => {
         }, []);
 
     function createRoom() {
-        ApiService.createChatRooms("웹프로그래밍", "이석기", "O").then(response => {
+        ApiService.createChatRooms("네트워크 프로그래밍", "정인환", "B").then(response => {
             setChatRooms(response.data);
         });
     }
@@ -101,8 +96,6 @@ const ChatRooms = ({setRoomId, setRoomName, setRoomInfo}) => {
                                         <TableCell>
                                             <div>
                                                 <div><p onClick={() => {
-                                                    // setRoomId(roomInfo.roomId);
-                                                    //setRoomName(roomInfo.roomName);
                                                     setRoomInfo(roomInfo);
                                                 }}>{roomList(roomInfo.roomId, roomInfo.roomName)}</p></div>
                                             </div>

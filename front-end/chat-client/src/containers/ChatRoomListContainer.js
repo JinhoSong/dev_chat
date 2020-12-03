@@ -1,12 +1,12 @@
 import React from 'react';
 import ChatRooms from "../components/chatRoom/ChatRooms";
 import {connect} from 'react-redux';
-import chatRooms, {setRoomId, setRoomName, setRoomInfo} from '../modules/chatRooms';
+import chatRooms, {setRoomInfo} from '../modules/chatRooms';
 import Grid from "@material-ui/core/Grid";
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Header from '../components/common/Header'
 import UserInfo from "../components/common/UserInfo";
-const ChatRoomListContainer = ({setRoomId, setRoomName, setRoomInfo, user}) => {
+const ChatRoomListContainer = ({setRoomInfo, user}) => {
     const classes = useStyles();
     return (
         <div>
@@ -17,7 +17,7 @@ const ChatRoomListContainer = ({setRoomId, setRoomName, setRoomInfo, user}) => {
                     <Grid container spacing={2}>
                         <Grid container item xs={12}>
                             <Grid item xs={8}>
-                                <ChatRooms setRoomInfo={setRoomInfo} setRoomId={setRoomId} setRoomName={setRoomName}/>
+                                <ChatRooms setRoomInfo={setRoomInfo}/>
                             </Grid>
                             <Grid item xs={1}>
 
@@ -66,8 +66,6 @@ export default connect(
         user: state.loginModules.user,
     }),
     {
-        setRoomId,
-        setRoomName,
         setRoomInfo
     },
 )(ChatRoomListContainer);

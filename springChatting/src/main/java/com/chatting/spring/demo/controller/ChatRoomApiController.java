@@ -2,11 +2,13 @@ package com.chatting.spring.demo.controller;
 
 import com.chatting.spring.demo.Repository.ChatRoomRepository;
 import com.chatting.spring.demo.chat.ChatRoom;
+import com.chatting.spring.demo.util.ServletUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -34,9 +36,13 @@ public class ChatRoomApiController {
 
     // 채팅방 입장 화면
     @GetMapping("/room/enter/{roomId}")
-    public String roomDetail(Model model, @PathVariable String roomId) {
-        model.addAttribute("roomId", roomId);
-        return "/chat/roomdetail";
+    public String roomDetail(@PathVariable String roomId) {
+        if(Objects.requireNonNull(ServletUtil.getSession()).getId() != null) {
+            System.out.println("세션아이디는 "+ServletUtil.getSession().getId());
+            return ServletUtil.getSession().getId();
+        }
+        else
+            return "error";
     }
 
     // 특정 채팅방 조회

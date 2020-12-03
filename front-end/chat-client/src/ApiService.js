@@ -9,5 +9,9 @@ class ApiService {
     createChatRooms(roomName,profName,tag){
         return axios.post(CHATROOM_URL+"/room?roomName="+roomName+"&profName="+profName+"&tag="+tag);
     }
+    getSessionId(roomId){
+        console.log("요청 url :" +CHATROOM_URL+"/room/enter/"+roomId);
+        return axios.get(CHATROOM_URL+"/room/enter/"+roomId)
+    }
 }
 export default new ApiService();
