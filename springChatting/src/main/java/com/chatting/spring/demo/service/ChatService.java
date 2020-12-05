@@ -2,6 +2,7 @@ package com.chatting.spring.demo.service;
 
 import com.chatting.spring.demo.chat.ChatMessage;
 import com.chatting.spring.demo.chat.MessageType;
+import com.chatting.spring.demo.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -17,6 +18,7 @@ public class ChatService {
     private final SimpMessageSendingOperations simpMessageSendingOperations; // 앞에 Simp주의 Simple이 아니다
     private final MemberService memberService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final FileInfoService fileInfoService;
     private long count=0;
     public void handleActions(ChatMessage chatMessage) {
 
@@ -26,14 +28,20 @@ public class ChatService {
         if (MessageType.ENTER.equals(command)) {
             chatMessage.setId(count++);
             this.enterRoom(chatMessage);
+
         } else if(MessageType.TALK.equals(command)){
             chatMessage.setId(count++);
             this.SendAllClient(chatMessage);
+
         } else if(MessageType.ATTEND.equals(command)){
             chatMessage.setId(count++);
             attend(chatMessage);
+
         } else if(MessageType.DELETE.equals(command)) {
             this.SendAllClient(chatMessage);
+
+        } else if(MessageType.FILE.equals(command)){
+            fileInfoService.setMultipartFile(chatMessage.getFileInfo());
         }
     }
 

@@ -9,6 +9,7 @@ import SockJsClient from 'react-stomp';
 import Button from '@material-ui/core/Button';
 import {makeStyles} from '@material-ui/core/styles';
 import ApiService from "../../ApiService";
+import Fileupload from "./Fileupload";
 
 const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, sessionId}) => {
     const useStyles = makeStyles((theme) => ({
@@ -22,10 +23,10 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
     const [messages, setMessages] = useState([]);
     const [chatMessage, setChatMessage] = useState({});
     const [inputMessage, setInputMessage] = useState("");
-    //const [sessionId,setSessionId] = useState("");
-    const [attendState, setAttendState] = useState(false); // 초기값 지정
+    const [file, setFile] = useState("");
     const scrollRef = useRef(null);
     const inputRef = useRef(null);
+    const fileInput = useRef();
 
     let sockJS = new SockJS("http://localhost:8080/ws-stomp");
     let stompClient = Stomp.over(sockJS);
@@ -49,17 +50,10 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
         }, []);
     useEffect(() => {
         // 초기 입장시에만 프로토콜을 보낸다.
-        const enterMessage = {
-            "id": "",
-            "user": user,
-            "messageType": "ENTER",
-            "message": "",
-            "roomId": roomId,
-            "time": sendTime(),
-            "sessionId": sessionId, //보낼때의 세션 아이디
-        };
+        const enterMessage = createMessage("ENTER", "");
+
         stompClient.connect({}, () => {
-            stompClient.subscribe('/pub/chat/roomId/'+roomId, onMessageReceive);
+            stompClient.subscribe('/pub/chat/roomId/' + roomId, onMessageReceive);
             stompClient.send("/pub/chat/message", {}, JSON.stringify(enterMessage));
         });
     }, []);
@@ -94,78 +88,55 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
     // 메시지를 받는 곳
     // 여기서 필터링 작업을 수행하면 된다.
     const onMessageReceive = (msg) => {
-        if(msg.messageType === null)
-            msg = JSON.parse(msg);
-        console.log(msg.messageType);
         if (msg.messageType === "ATTEND") {
             if (user.role === "student") {
                 // 학생일 경우
-                let result = window.confirm("출석확인 알람이 도착하였습니다! ");
+                console.log(msg);
+                const result = window.confirm("출석확인 알람이 도착하였습니다! ");
                 if (result) {
                     // 성공시
-                    console.log(msg);
-                    const attendMessage = {
-                        "id": "",
-                        "user": user,
-                        "messageType": "ATTEND",
-                        "message": msg.message, // 요청이 날라온 시간이 담긴 메시지를 그대로 보낸다.
-                        "roomId": roomId,
-                        "time": sendTime(), // 현재 시간도 세팅한다.
-                        "sessionId": sessionId,
-                    }
+                    const attendMessage = createMessage("ATTEND", msg.message);
                     sendMessage(attendMessage);
                 }
             }
-        } else if(msg.messageType ==="DELETE"){
-            // 삭제의 경우
-            //        const filterBox = commentBox.filter((comment) => comment.id !== Number(event.target.className))
-            let m = messages;
-            const tmp = m.filter((message) => message.id !== msg.id); // 조건을 만족하는 배열 리턴
+        } else if (msg.messageType === "DELETE") {
+            console.log(msg);
+            const tmp = messages.filter((message) => message.id !== msg.id); // 조건을 만족하는 배열 리턴
             setMessages(tmp);
-        }else {
+        } else {
             addMessage(msg);
         }
     }
+    const createMessage = (messageType, message) => {
+        return {
+            "id": "",
+            "user": user,
+            "messageType": messageType,
+            "message": message,
+            "roomId": roomId,
+            "time": sendTime(),
+            "sessionId": sessionId,
+            "fileInfo":null,
+        };
+    }
 
     const settingMessage = (msg) => {
+        let result;
         if (msg[0] === '/') {
             switch (msg) {
                 case "/출석":
                     if (user.role === "professor") {
-                        //교수만 사인을 보낼 수 있다.
-                        return {
-                            "id": "",
-                            "user": user,
-                            "messageType": "ATTEND",
-                            "message": msg,
-                            "roomId": roomId,
-                            "time": sendTime(),
-                            "sessionId": sessionId,
-                        };
+                        result = createMessage("ATTEND", msg);
                     } else {
-                        // 본인 출석 여부 확인하는데 이용
-                        return {
-                            "user": user,
-                            "messageType": "TALK",
-                            "message": msg,
-                            "roomId": roomId,
-                            "time": sendTime(),
-                            "sessionId": sessionId,
-                        };
+                        result = createMessage("TALK", msg);
                     }
             }
         } else {
             // 그냥 채팅이다.
-            return {
-                "id": "",
-                "user": user,
-                "messageType": "TALK",
-                "message": msg,
-                "roomId": roomId,
-                "time": sendTime(),
-                "sessionId": sessionId,
-            };
+            result = createMessage("TALK", msg);
         }
+
+        return result;
         // 커맨드 명령을 나눌 곳
     };
 
@@ -173,24 +144,14 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
         const position = message.user.studentId === user.studentId;
 
         function deleteProtocol() {
-            const deleteMessage = {
-                "id": message.id,
-                "user": message.user,
-                "messageType": "DELETE",
-                "message": message.message, // 요청이 날라온 시간이 담긴 메시지를 그대로 보낸다.
-                "roomId": roomId,
-                "time": sendTime(), // 현재 시간도 세팅한다.
-                "sessionId": sessionId,
+            const result = window.confirm("메시지를 삭제하시겠습니까?");
+            if (result) {
+                // true
+                const deleteMessage = createMessage("DELETE","");
+                deleteMessage.id=message.id;
+                sendMessage(deleteMessage);
             }
-            sendMessage(deleteMessage);
-            console.log(deleteMessage);
-            console.log("메시지 삭제 프로토콜 전송");
         }
-
-        function elseClick() {
-
-        }
-
         switch (message.messageType) {
             case "ENTER":
                 if (message.user.name !== user.name) {
@@ -224,13 +185,14 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
                             text={message.message}
                             title={position ? null : message.sender}
                             replyButton={position}
-                            onReplyClick={position ? deleteProtocol : elseClick}
+                            onReplyClick={deleteProtocol}
                             dateString={message.time}
                         />
                     </div>
                 );
             case "DELETE":
                 console.log(message.message + "삭제");
+
         }
     }
 
@@ -276,7 +238,43 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
                         setInputMessage("");
                     }}>전송
                 </Button>
+                <div>
+                    <input type="file"
+                           name="file"
+                           ref={fileInput}
+                           onChange={function (e) {
+                               setFile(e.target.files[0]);
+                           }}/>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        className={classes.button}
+                        size="small"
+                        type="button" //안하면 submit되서 리다이렉트 시켜버린다. 주의!
+                        onClick={function () {
 
+                            //msg.file=file;
+                            const formData = new FormData();
+                            formData.append('file', file);
+
+                            let reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload=(e)=>{
+                                console.log("file data" , e.target.result);
+                                let msg = createMessage("FILE","");
+                                let fileInfo = {
+                                    "fileToBase64":e.target.result,
+                                    "fileName": file.name,
+                                }
+                                console.log(fileInfo);
+                                msg.fileInfo=fileInfo;
+                                sendMessage(msg);
+                            }
+                            fileInput.current.value='';
+                            setFile(null);
+                        }}>현재 파일전송
+                    </Button>
+                </div>
             </form>
 
         </div>

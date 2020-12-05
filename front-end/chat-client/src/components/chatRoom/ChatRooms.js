@@ -18,11 +18,6 @@ const columns = [
     {id: '교수', label: '교수', minWidth: 170},
 ];
 
-function createData(name, code, population, size) {
-    const density = population / size;
-    return {name, code, population, size, density};
-}
-
 const useStyles = makeStyles({
     root: {
         width: '100%',
