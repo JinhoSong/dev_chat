@@ -44,7 +44,7 @@ public class S3Service {
                 .build();
     }
 
-    public FileInfo upload(MultipartFile file) throws IOException{
+    public String upload(MultipartFile file) throws IOException{
 
         FileInfo fileInfo = new FileInfo();
 
@@ -56,10 +56,8 @@ public class S3Service {
 
         String fileUrl = s3Client.getUrl(bucket,fileName).toString();
 
-        fileInfo.setFileName(fileName);
-        //fileInfo.setFilePath(fileUrl);
         //System.out.println("파일 url은 " + fileUrl);
-        return fileInfo;
+        return fileUrl;
     }
 
 }

@@ -9,7 +9,6 @@ import SockJsClient from 'react-stomp';
 import Button from '@material-ui/core/Button';
 import {makeStyles} from '@material-ui/core/styles';
 import ApiService from "../../ApiService";
-import Fileupload from "./Fileupload";
 
 const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, sessionId}) => {
     const useStyles = makeStyles((theme) => ({
@@ -81,6 +80,7 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
                 "roomId": msg.roomId,
                 "time": msg.time,
                 "sessionId": msg.sessionId,
+                "fileInfo": msg.fileInfo,
             }
 
         ]);
@@ -116,7 +116,7 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
             "roomId": roomId,
             "time": sendTime(),
             "sessionId": sessionId,
-            "fileInfo":null,
+            "fileInfo": null,
         };
     }
 
@@ -147,11 +147,12 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
             const result = window.confirm("메시지를 삭제하시겠습니까?");
             if (result) {
                 // true
-                const deleteMessage = createMessage("DELETE","");
-                deleteMessage.id=message.id;
+                const deleteMessage = createMessage("DELETE", "");
+                deleteMessage.id = message.id;
                 sendMessage(deleteMessage);
             }
         }
+
         switch (message.messageType) {
             case "ENTER":
                 if (message.user.name !== user.name) {
@@ -192,8 +193,54 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
                 );
             case "DELETE":
                 console.log(message.message + "삭제");
+                break;
+            case "FILE":
+                return (
+                    <div>
+                        <MessageBox
+                            position={position ? 'right' : 'left'}
+                            type={'file'}
+                            text={<a onClick={function () {
+                                window.location.href = message.message;
+                            }}>{message.fileInfo.fileName}</a>}
+                            replyButton={position}
+                            onReplyClick={deleteProtocol}
+                            dateString={message.time}
+                        />
+                    </div>
+                )
+            case "IMAGE":
+                return (
+                    <div>
+                        <MessageBox
+                            position={position ? 'right' : 'left'}
+                            type={'text'}
+                            text={<img src={message.message} width="300" height="400" onClick={function () {
+                                window.location.href = message.message;
+                            }}/>}
+                            replyButton={position}
+                            onReplyClick={deleteProtocol}
+                            dateString={message.time}
+                        />
+                    </div>
+                )
+        }
+    }
+
+    function setFileType(f) {
+        switch (f) {
+            case "image/jpg":
+            case "image/png":
+            case "image/jpeg":
+                return "jpg";
+            case "plain/txt:":
+                return "txt";
+            default :
+                return "txt";
+
 
         }
+
     }
 
     return (
@@ -252,25 +299,40 @@ const ChatRoomDetail = ({setSessionId, roomId, username, user, roomName, tag, se
                         size="small"
                         type="button" //안하면 submit되서 리다이렉트 시켜버린다. 주의!
                         onClick={function () {
-
-                            //msg.file=file;
-                            const formData = new FormData();
-                            formData.append('file', file);
-
                             let reader = new FileReader();
                             reader.readAsDataURL(file);
-                            reader.onload=(e)=>{
-                                console.log("file data" , e.target.result);
-                                let msg = createMessage("FILE","");
-                                let fileInfo = {
-                                    "fileToBase64":e.target.result,
-                                    "fileName": file.name,
+                            reader.onload = (e) => {
+                                let target = e.target.result;
+                                let msg = createMessage("FILE", "");
+                                if (target.length < 60000) {
+                                    msg.fileInfo = {
+                                        "fileToBase64": e.target.result,
+                                        "fileName": file.name,
+                                        "fileType": setFileType(file.type),
+                                    };
+                                    sendMessage(msg);
+                                } else {
+                                    let offset = 0;
+                                    while (offset <= target.length) {
+                                        if (offset === 0) {
+                                            msg.messageType = "FILESTART";
+                                        } else if (offset + 60000 < target.length) {
+                                            // 옵셋까지 보내면 파일 크기보다 작은 경우
+                                            msg.messageType = "FILESENDING";
+                                        } else {
+                                            msg.messageType = "FILEEND";
+                                        }
+                                        msg.fileInfo = {
+                                            "fileToBase64": target.substring(offset, offset + 60000),
+                                            "fileName": file.name,
+                                            "fileType": setFileType(file.type),
+                                        };
+                                        offset = offset + 60000;
+                                        sendMessage(msg);
+                                    }
                                 }
-                                console.log(fileInfo);
-                                msg.fileInfo=fileInfo;
-                                sendMessage(msg);
                             }
-                            fileInput.current.value='';
+                            fileInput.current.value = '';
                             setFile(null);
                         }}>현재 파일전송
                     </Button>

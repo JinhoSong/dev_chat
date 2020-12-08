@@ -1,4 +1,4 @@
-package com.chatting.spring.demo.member;
+package com.chatting.spring.demo.user;
 
 import lombok.Getter;
 import lombok.Setter;

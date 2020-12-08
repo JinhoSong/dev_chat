@@ -38,7 +38,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/commons-codec/commons-codec
     compile group: 'commons-codec', name: 'commons-codec', version: '1.9'
-    // base64를 이용한 파일업로드 용
+    // https://mvnrepository.com/artifact/net.iharder/base64
+    compile group: 'net.iharder', name: 'base64', version: '2.3.8'
+
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

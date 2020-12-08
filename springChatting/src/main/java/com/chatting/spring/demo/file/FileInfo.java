@@ -10,4 +10,5 @@ public class FileInfo {
 
     private String fileToBase64;
     private String fileName;
+    private FileType fileType;
 }
