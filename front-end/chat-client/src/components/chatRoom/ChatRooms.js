@@ -49,7 +49,7 @@ const ChatRooms = ({setRoomInfo}) => {
         }, []);
 
     function createRoom() {
-        ApiService.createChatRooms("웹프로그래밍", "이석기", "N").then(response => {
+        ApiService.createChatRooms("네트워크 프로그래밍", "정인환", "B").then(response => {
             setChatRooms(response.data);
         });
     }

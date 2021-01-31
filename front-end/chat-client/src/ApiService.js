@@ -1,7 +1,7 @@
 import axios from "axios";
 const BASE_URL = "http://localhost:8080/";
 const CHATROOM_URL = BASE_URL+"api/chat";
-const FILE_URL = BASE_URL+"/fileupload";
+
 class ApiService {
     getChatRooms(){
         return axios.get(CHATROOM_URL+"/rooms");

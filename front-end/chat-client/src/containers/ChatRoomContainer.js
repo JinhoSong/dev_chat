@@ -21,7 +21,6 @@ const ChatRoomContainer = ({setRoomInfo,setSessionId, user}) => {
                                 <ChatRoomDetail setSessionId={setSessionId}/>
                             </Grid>
                             <Grid item xs={1}>
-
                             </Grid>
                             <Grid item xs={2}>
                                 <UserInfo user={user}/>

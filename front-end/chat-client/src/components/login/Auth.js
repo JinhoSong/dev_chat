@@ -13,6 +13,7 @@ export function signIn({name, password, settingUser}) {
         // 없으면 Error 처리
         throw new Error()
     } else {
+        // 이거하나로 다 저장된다.
         settingUser(user);
         return user
     }

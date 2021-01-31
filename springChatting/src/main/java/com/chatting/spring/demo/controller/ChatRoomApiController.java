@@ -4,7 +4,6 @@ import com.chatting.spring.demo.Repository.ChatRoomRepository;
 import com.chatting.spring.demo.chat.ChatRoom;
 import com.chatting.spring.demo.util.ServletUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,9 +26,7 @@ public class ChatRoomApiController {
     // 채팅방 생성
     @PostMapping("/room")
     public List<ChatRoom> createRoom(@RequestParam String roomName,@RequestParam String profName,@RequestParam String tag) {
-        //String profName="정인환";
         chatRoomRepository.createRoom(roomName,profName,tag);
-
         // 전체를 리턴시켜준다.
         return chatRoomRepository.findAllRoom();
     }
@@ -38,7 +35,6 @@ public class ChatRoomApiController {
     @GetMapping("/room/enter/{roomId}")
     public String roomDetail(@PathVariable String roomId) {
         if(Objects.requireNonNull(ServletUtil.getSession()).getId() != null) {
-            System.out.println("세션아이디는 "+ServletUtil.getSession().getId());
             return ServletUtil.getSession().getId();
         }
         else

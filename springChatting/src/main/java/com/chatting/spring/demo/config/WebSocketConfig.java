@@ -11,10 +11,8 @@ import org.springframework.web.socket.config.annotation.*;
 @Configuration
 //@EnableWebSocket
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer,WebSocketConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    @Autowired
-    private  SocketHandler socketHandler;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -28,9 +26,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer,WebSock
         registry.addEndpoint("/ws-stomp").setAllowedOrigins("*").withSockJS();
     }
 
-    @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        System.out.println("핸들러");
-        registry.addHandler(socketHandler);
-    }
 }
